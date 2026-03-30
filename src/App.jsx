@@ -23,75 +23,69 @@ Plan:
    2. AccordionBtn
    3. AccordionContent
 */
-
 import {useState} from 'react';
 
-const input = [
-  {
-    accordionBtn: 'Button 1',
-    accordionContent: 'Content 1',
-    accordionId: 'accordion-1'
-  },
-  {
-    accordionBtn: 'Button 2',
-    accordionContent: 'Content 2',
-    accordionId: 'accordion-2'
-  },
-  {
-    accordionBtn: 'Button 3',
-    accordionContent: 'Content 3',
-    accordionId: 'accordion-3'
-  }    
+const accordionInput = [
+   {
+      btn: 'Button 1',
+      content: 'Content 1',
+      id: 'accordion-1'
+   },
+   {
+      btn: 'Button 2',
+      content: 'Content 2',
+      id: 'accordion-2'
+   },
+   {
+      btn: 'Button 3',
+      content: 'Content 3',
+      id: 'accordion-3'
+   }      
 ];
 
 const hide = {
-  display: 'none'
-};
-
-const show = {
-  display: 'block'
+   display: 'none'
 };
 
 function Accordions() {
-  const [openAccordionIds, setOpenAccordionIds] = useState([]);
+   const [accordionIds, setAccordionsIds] = useState([]);
+   const accordionIdsHandler = e => {
+      const currentId = e.currentTarget.id;
+      setAccordionsIds(prevIds => {
+         if(prevIds.includes(currentId)) {
+            return prevIds.filter(id => id !== currentId);
+         } else {
+            return [...prevIds, currentId];
+         }
+      });
+   };
 
-  const openAccordionIdsHandler = (e) => {
-    const currentId = e.currentTarget.id;
-    setOpenAccordionIds(prevIds => {
-      if(prevIds.includes(currentId)) {
-        return prevIds.filter(id => id !== currentId);
-      } else {
-        return [...prevIds, currentId];
-      }
-    });
-  };
+   return (
+      <div>
+         {accordionInput.map(accordion => {
+            const isOpen = accordionIds.includes(accordion.id);
 
-  return (
-    <div>
-      {input.map(accordion => (
-        <div key={accordion.accordionId}>          
-          <AccordionBtn accordion={accordion} openAccordionIdsHandler={openAccordionIdsHandler} openAccordionIds={openAccordionIds} />
-          <AccordionContent accordion={accordion} openAccordionIds={openAccordionIds} />
-        </div>
-      ))}
-    </div>
-  );
+            return (
+               <div key={accordion.id}>
+                  <AccordionBtn accordion={accordion} accordionIdsHandler={accordionIdsHandler} isOpen={isOpen} />
+                  <AccordionContent accordion={accordion} isOpen={isOpen} />
+               </div>
+            );
+      })}
+      </div>
+   );
 }
 
-function AccordionBtn({accordion, openAccordionIdsHandler, openAccordionIds}) {
-  return (
-    <div>
-      <button id={accordion.accordionId} aria-expanded={openAccordionIds.includes(accordion.accordionId) ? 'true' : 'false'} onClick={openAccordionIdsHandler}>{accordion.accordionBtn} {openAccordionIds.includes(accordion.accordionId) ? '-' : '+'}</button>
-    </div>
-  );
+function AccordionBtn({accordion, accordionIdsHandler, isOpen}) {
+   return <button id={accordion.id} onClick={accordionIdsHandler} aria-expanded={isOpen ? 'true': 'false'}>{accordion.btn} {isOpen ? '-' : '+'}</button>;
 }
 
-function AccordionContent({accordion, openAccordionIds}) {
-  return (
-    <div aria-labelledby={accordion.accordionId} style={openAccordionIds.includes(accordion.accordionId) ? show : hide}>
-      {accordion.accordionContent}
-    </div>
-  ); 
+function AccordionContent({accordion, isOpen}) {
+   return (
+      <div aria-labelledby={accordion.id} style={isOpen ? {} : hide}>
+         {accordion.content}
+      </div>
+   );
 }
 
 export default Accordions;
