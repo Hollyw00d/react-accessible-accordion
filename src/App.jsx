@@ -23,81 +23,9 @@ Plan:
    2. AccordionBtn
    3. AccordionContent
 */
-import {useState} from 'react';
+import accordions from './api/accordions';
+import { Accordions } from './Accordions';
 
-const accordions = [
-   {
-      btn: 'MLB',
-      content: 'Major League Baseball',
-      id: 'accordion-mlb',
-      startOpen: false
-   },
-   {
-      btn: 'NBA',
-      content: 'National Basketball Association',
-      id: 'accordion-nba',
-      startOpen: true
-   },
-   {
-      btn: 'NLF',
-      content: 'National Football League',
-      id: 'accordion-nfl',
-      startOpen: false
-   }      
-];
-
-function App() {
+export default function App() {
    return <Accordions accordions={accordions} />;
-};
-
-function Accordions({accordions}) {
-   const [accordionIds, setAccordionsIds] = useState(() => {
-      let isOpenIds = [];
-      accordions.map(accordion => {
-         if(accordion.startOpen) {
-            isOpenIds.push(accordion.id);
-         }
-      });
-      return isOpenIds;
-   });
-   const handlerAccordionIds = accordionId => {
-      setAccordionsIds(prevIds => {
-         if(prevIds.includes(accordionId)) {
-            return prevIds.filter(id => id !== accordionId);
-         } else {
-            return [...prevIds, accordionId];
-         }
-      });
-   };
-
-   return (
-      <div>
-         {accordions.map(accordion => {
-            const isOpen = accordionIds.includes(accordion.id);
-
-            return (
-               <div key={accordion.id}>
-                  <AccordionBtn accordion={accordion} handlerAccordionIds={() => handlerAccordionIds(accordion.id)} isOpen={isOpen} />
-                  <AccordionContent accordion={accordion} isOpen={isOpen} />
-               </div>
-            );
-      })}
-      </div>
-   );
 }
-
-function AccordionBtn({accordion, handlerAccordionIds, isOpen}) {
-   return <button id={`${accordion.id}-btn`} onClick={handlerAccordionIds} aria-expanded={isOpen} aria-controls={`${accordion.id}-content`}>{accordion.btn} {isOpen ? '-' : '+'}</button>;
-}
-
-function AccordionContent({accordion, isOpen}) {
-   if(!isOpen) return null;
-
-   return (
-      <div id={`${accordion.id}-content`} aria-labelledby={`${accordion.id}-btn`}>
-         {accordion.content}
-      </div>
-   );
-}
-
-export default App;
